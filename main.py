@@ -9,18 +9,16 @@
 
 # ## _Setup_ geral
 
-# In[551]:
+# In[1341]:
 
 
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import sklearn as sk
-from sklearn.datasets import fetch_20newsgroups
-from sklearn.feature_extraction.text import CountVectorizer
 
 
-# In[552]:
+# In[1342]:
 
 
 # # Algumas configurações para o matplotlib.
@@ -34,13 +32,13 @@ from sklearn.feature_extraction.text import CountVectorizer
 # sns.set()
 
 
-# In[553]:
+# In[1343]:
 
 
 countries = pd.read_csv("countries.csv")
 
 
-# In[554]:
+# In[1344]:
 
 
 new_column_names = [
@@ -63,7 +61,7 @@ countries.head(5)
 
 # ## Inicia sua análise a partir daqui
 
-# In[555]:
+# In[1345]:
 
 
 # Sua análise começa aqui.
@@ -93,7 +91,7 @@ countries.head(5)
 # 
 # Quais são as regiões (variável `Region`) presentes no _data set_? Retorne uma lista com as regiões únicas do _data set_ com os espaços à frente e atrás da string removidos (mas mantenha pontuação: ponto, hífen etc) e ordenadas em ordem alfabética.
 
-# In[556]:
+# In[1346]:
 
 
 def q1():
@@ -106,7 +104,7 @@ q1()
 # 
 # Discretizando a variável `Pop_density` em 10 intervalos com `KBinsDiscretizer`, seguindo o encode `ordinal` e estratégia `quantile`, quantos países se encontram acima do 90º percentil? Responda como um único escalar inteiro.
 
-# In[557]:
+# In[1347]:
 
 
 def q2():
@@ -120,7 +118,7 @@ q2()
 # 
 # Se codificarmos as variáveis `Region` e `Climate` usando _one-hot encoding_, quantos novos atributos seriam criados? Responda como um único escalar.
 
-# In[558]:
+# In[1348]:
 
 
 def q3():
@@ -139,7 +137,7 @@ q3()
 # 
 # Após aplicado o _pipeline_ descrito acima aos dados (somente nas variáveis dos tipos especificados), aplique o mesmo _pipeline_ (ou `ColumnTransformer`) ao dado abaixo. Qual o valor da variável `Arable` após o _pipeline_? Responda como um único float arredondado para três casas decimais.
 
-# In[559]:
+# In[1349]:
 
 
 test_country = [
@@ -156,7 +154,7 @@ def padronize(x):
     return result
 
 
-# In[560]:
+# In[1350]:
 
 
 def q4():
@@ -186,7 +184,7 @@ q4()
 # 
 # Você deveria remover da análise as observações consideradas _outliers_ segundo esse método? Responda como uma tupla de três elementos `(outliers_abaixo, outliers_acima, removeria?)` ((int, int, bool)).
 
-# In[561]:
+# In[1351]:
 
 
 # [q1 - 1.5x(q3 - q1), q3 + 1.5(q3 - q1)]
@@ -224,10 +222,12 @@ q5()
 # 
 # Aplique `CountVectorizer` ao _data set_ `newsgroups` e descubra o número de vezes que a palavra _phone_ aparece no corpus. Responda como um único escalar.
 
-# In[562]:
+# In[1352]:
 
 
 import re
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 
 def isWordPresent(sentence) :
     x = re.findall(r"\bphone\b", sentence, re.IGNORECASE)
@@ -240,7 +240,7 @@ categories = ['sci.electronics', 'comp.graphics', 'rec.motorcycles']
 newsgroup = fetch_20newsgroups(subset="train", categories=categories, shuffle=True, random_state=42)
 
 
-# In[563]:
+# In[1353]:
 
 
 def q6():
@@ -253,15 +253,44 @@ def q6():
     return count
 q6()
 
+def outra_formar_de_fazer():
+    count_vectorizer = CountVectorizer()
+    newsgroups_counts = count_vectorizer.fit_transform(newsgroup.data)
+
+    words_idx = sorted([count_vectorizer.vocabulary_.get("phone")])
+
+    df = pd.DataFrame(newsgroups_counts[:2000, words_idx].toarray(), columns=np.array(count_vectorizer.get_feature_names_out())[words_idx])
+
+    return df['phone'].sum()
+outra_formar_de_fazer()
+
 
 # ## Questão 7
 # 
 # Aplique `TfidfVectorizer` ao _data set_ `newsgroups` e descubra o TF-IDF da palavra _phone_. Responda como um único escalar arredondado para três casas decimais.
 
-# In[564]:
+# In[ ]:
+
+
+
+
+
+# In[1354]:
 
 
 def q7():
-    # Retorne aqui o resultado da questão 4.
-    pass
+    count_vectorizer = CountVectorizer()
+    newsgroups_counts = count_vectorizer.fit_transform(newsgroup.data)
+
+    words_idx = sorted([count_vectorizer.vocabulary_.get("phone")])
+
+    tfidf_transformer = TfidfTransformer().fit(newsgroups_counts)
+
+    newsgroups_tfidf = tfidf_transformer.transform(newsgroups_counts)
+
+    df2 = pd.DataFrame(newsgroups_tfidf[:2000, words_idx].toarray(), columns=np.array(count_vectorizer.get_feature_names_out())[words_idx])
+
+
+    return round(df2['phone'].sum(), 3)
+q7()
 
