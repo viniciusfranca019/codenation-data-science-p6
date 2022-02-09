@@ -9,7 +9,7 @@
 
 # ## _Setup_ geral
 
-# In[66]:
+# In[808]:
 
 
 import pandas as pd
@@ -18,7 +18,7 @@ import seaborn as sns
 import sklearn as sk
 
 
-# In[67]:
+# In[809]:
 
 
 # # Algumas configurações para o matplotlib.
@@ -32,13 +32,13 @@ import sklearn as sk
 # sns.set()
 
 
-# In[68]:
+# In[810]:
 
 
 countries = pd.read_csv("countries.csv")
 
 
-# In[69]:
+# In[811]:
 
 
 new_column_names = [
@@ -61,7 +61,7 @@ countries.head(5)
 
 # ## Inicia sua análise a partir daqui
 
-# In[70]:
+# In[812]:
 
 
 # Sua análise começa aqui.
@@ -83,7 +83,7 @@ for var in to_clear_space:
 
     countries[var] = countries[var].map(lambda name: name.strip())
 
-countries
+countries.head(20)
     
 
 
@@ -91,7 +91,7 @@ countries
 # 
 # Quais são as regiões (variável `Region`) presentes no _data set_? Retorne uma lista com as regiões únicas do _data set_ com os espaços à frente e atrás da string removidos (mas mantenha pontuação: ponto, hífen etc) e ordenadas em ordem alfabética.
 
-# In[71]:
+# In[813]:
 
 
 def q1():
@@ -104,24 +104,28 @@ q1()
 # 
 # Discretizando a variável `Pop_density` em 10 intervalos com `KBinsDiscretizer`, seguindo o encode `ordinal` e estratégia `quantile`, quantos países se encontram acima do 90º percentil? Responda como um único escalar inteiro.
 
-# In[72]:
+# In[814]:
 
 
 def q2():
-    # Retorne aqui o resultado da questão 2.
-    pass
+    how_many_countries = len(countries['Country'].unique())
+    qty_percentil = how_many_countries / 100
+    return round(qty_percentil * 10)
+q2()
 
 
 # # Questão 3
 # 
 # Se codificarmos as variáveis `Region` e `Climate` usando _one-hot encoding_, quantos novos atributos seriam criados? Responda como um único escalar.
 
-# In[73]:
+# In[815]:
 
 
 def q3():
-    # Retorne aqui o resultado da questão 3.
-    pass
+    how_many_regions = len(list(countries['Region'].unique()))
+    how_many_climates = len(list(countries['Climate'].unique()))
+    return how_many_climates + how_many_regions
+q3()
 
 
 # ## Questão 4
@@ -133,7 +137,7 @@ def q3():
 # 
 # Após aplicado o _pipeline_ descrito acima aos dados (somente nas variáveis dos tipos especificados), aplique o mesmo _pipeline_ (ou `ColumnTransformer`) ao dado abaixo. Qual o valor da variável `Arable` após o _pipeline_? Responda como um único float arredondado para três casas decimais.
 
-# In[74]:
+# In[816]:
 
 
 test_country = [
@@ -145,19 +149,30 @@ test_country = [
     -0.3699637766938669, -0.6149300604558857, -0.854369594993175,
     0.263445277972641, 0.5712416961268142
 ]
+def padronize(x):
+    result = (x - x.mean()) / x.std()
+    return result
 
 
-# In[75]:
+# In[817]:
 
 
 def q4():
-    # Retorne aqui o resultado da questão 4.
-    pass
+    arable = countries['Arable'].dropna()
+    arable_list = list(arable)
+    mediana = arable.quantile(q=0.5)
+    # test = []
+    # for value in arable_list:
+    #     test.append(mediana + value)
+    # test2 = pd.Series(test)
+    to_return = (test_country[11] - arable.mean()) / arable.std()
+    return round(to_return, 3)
+q4()
 
 
 # ## Questão 5
 # 
-# Descubra o número de _outliers_ da variável `Net_migration` segundo o método do _boxplot_, ou seja, usando a lógica:
+# Descubra o número de _outliers_ da variável `'Net_migration'` segundo o método do _boxplot_, ou seja, usando a lógica:
 # 
 # $$x \notin [Q1 - 1.5 \times \text{IQR}, Q3 + 1.5 \times \text{IQR}] \Rightarrow x \text{ é outlier}$$
 # 
@@ -165,12 +180,29 @@ def q4():
 # 
 # Você deveria remover da análise as observações consideradas _outliers_ segundo esse método? Responda como uma tupla de três elementos `(outliers_abaixo, outliers_acima, removeria?)` ((int, int, bool)).
 
-# In[76]:
+# In[818]:
 
+
+# [q1 - 1.5x(q3 - q1), q3 + 1.5(q3 - q1)]
 
 def q5():
-    # Retorne aqui o resultado da questão 4.
-    pass
+    net_migration = countries['Net_migration']
+    q3 = net_migration.quantile(q=0.75)
+    q1 = net_migration.quantile(q=0.25)
+    iqr = q3 - q1
+    k = 1.5
+
+    min_value = q1 - k * iqr
+    max_value = q3 + k * iqr
+
+    how_many_down_outliers = len(list(net_migration[net_migration < min_value]))
+    how_many_up_outliers = len(list(net_migration[net_migration > max_value]))
+
+
+    to_return = (how_many_down_outliers, how_many_up_outliers, False)
+
+    return to_return
+q5()
 
 
 # ## Questão 6
@@ -186,7 +218,7 @@ def q5():
 # 
 # Aplique `CountVectorizer` ao _data set_ `newsgroups` e descubra o número de vezes que a palavra _phone_ aparece no corpus. Responda como um único escalar.
 
-# In[77]:
+# In[819]:
 
 
 def q6():
@@ -198,7 +230,7 @@ def q6():
 # 
 # Aplique `TfidfVectorizer` ao _data set_ `newsgroups` e descubra o TF-IDF da palavra _phone_. Responda como um único escalar arredondado para três casas decimais.
 
-# In[78]:
+# In[820]:
 
 
 def q7():
