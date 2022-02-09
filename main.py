@@ -9,7 +9,7 @@
 
 # ## _Setup_ geral
 
-# In[40]:
+# In[66]:
 
 
 import pandas as pd
@@ -18,7 +18,7 @@ import seaborn as sns
 import sklearn as sk
 
 
-# In[41]:
+# In[67]:
 
 
 # # Algumas configurações para o matplotlib.
@@ -32,13 +32,13 @@ import sklearn as sk
 # sns.set()
 
 
-# In[42]:
+# In[68]:
 
 
 countries = pd.read_csv("countries.csv")
 
 
-# In[43]:
+# In[69]:
 
 
 new_column_names = [
@@ -61,7 +61,7 @@ countries.head(5)
 
 # ## Inicia sua análise a partir daqui
 
-# In[44]:
+# In[70]:
 
 
 # Sua análise começa aqui.
@@ -91,11 +91,11 @@ countries
 # 
 # Quais são as regiões (variável `Region`) presentes no _data set_? Retorne uma lista com as regiões únicas do _data set_ com os espaços à frente e atrás da string removidos (mas mantenha pontuação: ponto, hífen etc) e ordenadas em ordem alfabética.
 
-# In[45]:
+# In[71]:
 
 
 def q1():
-    regions = countries['Region']
+    regions = countries['Region'].sort_values()
     return list(regions.unique())
 q1()
 
@@ -104,7 +104,7 @@ q1()
 # 
 # Discretizando a variável `Pop_density` em 10 intervalos com `KBinsDiscretizer`, seguindo o encode `ordinal` e estratégia `quantile`, quantos países se encontram acima do 90º percentil? Responda como um único escalar inteiro.
 
-# In[46]:
+# In[72]:
 
 
 def q2():
@@ -116,7 +116,7 @@ def q2():
 # 
 # Se codificarmos as variáveis `Region` e `Climate` usando _one-hot encoding_, quantos novos atributos seriam criados? Responda como um único escalar.
 
-# In[47]:
+# In[73]:
 
 
 def q3():
@@ -133,7 +133,7 @@ def q3():
 # 
 # Após aplicado o _pipeline_ descrito acima aos dados (somente nas variáveis dos tipos especificados), aplique o mesmo _pipeline_ (ou `ColumnTransformer`) ao dado abaixo. Qual o valor da variável `Arable` após o _pipeline_? Responda como um único float arredondado para três casas decimais.
 
-# In[48]:
+# In[74]:
 
 
 test_country = [
@@ -147,7 +147,7 @@ test_country = [
 ]
 
 
-# In[49]:
+# In[75]:
 
 
 def q4():
@@ -165,7 +165,7 @@ def q4():
 # 
 # Você deveria remover da análise as observações consideradas _outliers_ segundo esse método? Responda como uma tupla de três elementos `(outliers_abaixo, outliers_acima, removeria?)` ((int, int, bool)).
 
-# In[50]:
+# In[76]:
 
 
 def q5():
@@ -186,7 +186,7 @@ def q5():
 # 
 # Aplique `CountVectorizer` ao _data set_ `newsgroups` e descubra o número de vezes que a palavra _phone_ aparece no corpus. Responda como um único escalar.
 
-# In[51]:
+# In[77]:
 
 
 def q6():
@@ -198,7 +198,7 @@ def q6():
 # 
 # Aplique `TfidfVectorizer` ao _data set_ `newsgroups` e descubra o TF-IDF da palavra _phone_. Responda como um único escalar arredondado para três casas decimais.
 
-# In[52]:
+# In[78]:
 
 
 def q7():
