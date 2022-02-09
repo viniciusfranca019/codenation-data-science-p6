@@ -9,16 +9,18 @@
 
 # ## _Setup_ geral
 
-# In[808]:
+# In[551]:
 
 
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import sklearn as sk
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import CountVectorizer
 
 
-# In[809]:
+# In[552]:
 
 
 # # Algumas configurações para o matplotlib.
@@ -32,13 +34,13 @@ import sklearn as sk
 # sns.set()
 
 
-# In[810]:
+# In[553]:
 
 
 countries = pd.read_csv("countries.csv")
 
 
-# In[811]:
+# In[554]:
 
 
 new_column_names = [
@@ -61,7 +63,7 @@ countries.head(5)
 
 # ## Inicia sua análise a partir daqui
 
-# In[812]:
+# In[555]:
 
 
 # Sua análise começa aqui.
@@ -83,7 +85,7 @@ for var in to_clear_space:
 
     countries[var] = countries[var].map(lambda name: name.strip())
 
-countries.head(20)
+countries.head(5)
     
 
 
@@ -91,7 +93,7 @@ countries.head(20)
 # 
 # Quais são as regiões (variável `Region`) presentes no _data set_? Retorne uma lista com as regiões únicas do _data set_ com os espaços à frente e atrás da string removidos (mas mantenha pontuação: ponto, hífen etc) e ordenadas em ordem alfabética.
 
-# In[813]:
+# In[556]:
 
 
 def q1():
@@ -104,7 +106,7 @@ q1()
 # 
 # Discretizando a variável `Pop_density` em 10 intervalos com `KBinsDiscretizer`, seguindo o encode `ordinal` e estratégia `quantile`, quantos países se encontram acima do 90º percentil? Responda como um único escalar inteiro.
 
-# In[814]:
+# In[557]:
 
 
 def q2():
@@ -118,7 +120,7 @@ q2()
 # 
 # Se codificarmos as variáveis `Region` e `Climate` usando _one-hot encoding_, quantos novos atributos seriam criados? Responda como um único escalar.
 
-# In[815]:
+# In[558]:
 
 
 def q3():
@@ -137,7 +139,7 @@ q3()
 # 
 # Após aplicado o _pipeline_ descrito acima aos dados (somente nas variáveis dos tipos especificados), aplique o mesmo _pipeline_ (ou `ColumnTransformer`) ao dado abaixo. Qual o valor da variável `Arable` após o _pipeline_? Responda como um único float arredondado para três casas decimais.
 
-# In[816]:
+# In[559]:
 
 
 test_country = [
@@ -154,7 +156,7 @@ def padronize(x):
     return result
 
 
-# In[817]:
+# In[560]:
 
 
 def q4():
@@ -163,7 +165,11 @@ def q4():
     mediana = arable.quantile(q=0.5)
     # test = []
     # for value in arable_list:
-    #     test.append(mediana + value)
+    #     serie = pd.Series(test)
+    #     if value != 0:
+    #         test.append(serie.quantile(q=0.5))
+    #     if value == 0:
+    #         test.append(0)
     # test2 = pd.Series(test)
     to_return = (test_country[11] - arable.mean()) / arable.std()
     return round(to_return, 3)
@@ -180,7 +186,7 @@ q4()
 # 
 # Você deveria remover da análise as observações consideradas _outliers_ segundo esse método? Responda como uma tupla de três elementos `(outliers_abaixo, outliers_acima, removeria?)` ((int, int, bool)).
 
-# In[818]:
+# In[561]:
 
 
 # [q1 - 1.5x(q3 - q1), q3 + 1.5(q3 - q1)]
@@ -218,19 +224,41 @@ q5()
 # 
 # Aplique `CountVectorizer` ao _data set_ `newsgroups` e descubra o número de vezes que a palavra _phone_ aparece no corpus. Responda como um único escalar.
 
-# In[819]:
+# In[562]:
+
+
+import re
+
+def isWordPresent(sentence) :
+    x = re.findall(r"\bphone\b", sentence, re.IGNORECASE)
+    if len(x) > 0:
+        return (True, len(x))
+    return (False, 0)
+
+
+categories = ['sci.electronics', 'comp.graphics', 'rec.motorcycles']
+newsgroup = fetch_20newsgroups(subset="train", categories=categories, shuffle=True, random_state=42)
+
+
+# In[563]:
 
 
 def q6():
-    # Retorne aqui o resultado da questão 4.
-    pass
+    data = newsgroup.data
+    count = 0
+    for sentence in data:
+        curr = isWordPresent(sentence)
+        if curr[0]:
+            count += curr[1]
+    return count
+q6()
 
 
 # ## Questão 7
 # 
 # Aplique `TfidfVectorizer` ao _data set_ `newsgroups` e descubra o TF-IDF da palavra _phone_. Responda como um único escalar arredondado para três casas decimais.
 
-# In[820]:
+# In[564]:
 
 
 def q7():
